@@ -53,6 +53,6 @@ rm -rf %{buildroot}
 %{_libdir}/X11/xedit/lisp/xedit.lsp
 %{_datadir}/X11/app-defaults/Xedit
 %{_datadir}/X11/app-defaults/Xedit-color
-%{_mandir}/man1/xedit.1x.bz2
+%{_mandir}/man1/xedit.1x*
 
 

@@ -1,9 +1,13 @@
+%define		enable_xprint	0
 Name:		xedit
 Version:	1.0.2
-Release:	%mkrel 4
+Release:	%mkrel 5
 Summary:	Simple text editor for X
 Group:		Development/X11
 Source:		http://xorg.freedesktop.org/releases/individual/app/%{name}-%{version}.tar.bz2
+Patch0:		xedit-xprint.patch
+Patch1:		xedit-ResolveName.patch
+Patch2:		xedit-ispell.patch
 License:	MIT
 BuildRoot:	%{_tmppath}/%{name}-root
 
@@ -12,14 +16,26 @@ BuildRequires:	libxaw-devel >= 1.0.1
 BuildRequires:	libxprintutil-devel >= 1.0.1
 BuildRequires:	x11-util-macros >= 1.0.1
 
+Requires:	x11-data-bitmaps
+Requires:	aspell
+
 %description
 Xedit provides a simple text editor for X.
 
 %prep
 %setup -q -n %{name}-%{version}
+%patch0 -p1 -b .xprint
+%patch1 -p1 -b .ResolveName
+%patch2 -p1 -b .ispell
 
 %build
-%configure2_5x	--x-includes=%{_includedir}\
+%configure2_5x\
+%if %{enable_xprint}
+		--enable-xprint\
+%else
+		--disable-xprint\
+%endif
+		--x-includes=%{_includedir}\
 		--x-libraries=%{_libdir}
 
 %make

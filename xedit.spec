@@ -1,7 +1,7 @@
 %define		enable_xprint	0
 Name:		xedit
 Version:	1.0.2
-Release:	%mkrel 5
+Release:	%mkrel 6
 Summary:	Simple text editor for X
 Group:		Development/X11
 Source:		http://xorg.freedesktop.org/releases/individual/app/%{name}-%{version}.tar.bz2
@@ -18,6 +18,16 @@ BuildRequires:	x11-util-macros >= 1.0.1
 
 Requires:	x11-data-bitmaps
 Requires:	aspell
+# courier (most modes)
+Requires:	x11-font-adobe-75dpi
+# lucidatypewriter (most modes)
+Requires:	x11-font-bh-lucidatypewriter-75dpi
+# helvetica (sgml/html edit modes)
+Requires:	x11-font-adobe-100dpi
+# lucida (hmtl mode)
+Requires:	x11-font-bh-75dpi
+# lucida (hmtl mode)
+Requires:	x11-font-bh-100dpi
 
 %description
 Xedit provides a simple text editor for X.

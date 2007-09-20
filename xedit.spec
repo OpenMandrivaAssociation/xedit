@@ -8,6 +8,7 @@ Source:		http://xorg.freedesktop.org/releases/individual/app/%{name}-%{version}.
 Patch0:		xedit-xprint.patch
 Patch1:		xedit-ResolveName.patch
 Patch2:		xedit-ispell.patch
+Patch3:		0003-SprintfFormat.patch
 License:	MIT
 BuildRoot:	%{_tmppath}/%{name}-root
 

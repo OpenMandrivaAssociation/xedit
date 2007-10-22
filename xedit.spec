@@ -1,7 +1,7 @@
 %define		enable_xprint	0
 Name:		xedit
 Version:	1.0.2
-Release:	%mkrel 8
+Release:	%mkrel 9
 Summary:	Simple text editor for X
 Group:		Development/X11
 Source:		http://xorg.freedesktop.org/releases/individual/app/%{name}-%{version}.tar.bz2
@@ -10,6 +10,7 @@ Patch1:		xedit-ResolveName.patch
 Patch2:		xedit-ispell.patch
 Patch3:		0003-SprintfFormat.patch
 Patch4:		0004-xedit-lisp.patch
+Patch5:		0005-readdir.patch
 License:	MIT
 BuildRoot:	%{_tmppath}/%{name}-root
 
@@ -41,6 +42,7 @@ Xedit provides a simple text editor for X.
 %patch2 -p1 -b .ispell
 %patch3 -p1 -b .SprintfFormat
 %patch4 -p1 -b .xedit-lisp
+%patch5 -p1 -b .readdir
 
 %build
 %configure2_5x\

@@ -16,7 +16,9 @@ BuildRoot:	%{_tmppath}/%{name}-root
 
 BuildRequires:	libxt-devel >= 1.0.0
 BuildRequires:	libxaw-devel >= 1.0.1
+%if %{enable_xprint}
 BuildRequires:	libxprintutil-devel >= 1.0.1
+%endif
 BuildRequires:	x11-util-macros >= 1.0.1
 
 Requires:	x11-data-bitmaps

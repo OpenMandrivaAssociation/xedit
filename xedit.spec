@@ -1,7 +1,7 @@
 %define		enable_xprint	0
 Name:		xedit
 Version:	1.0.2
-Release:	%mkrel 10
+Release:	%mkrel 11
 Summary:	Simple text editor for X
 Group:		Development/X11
 #		git clone git://anongit.freedesktop.org/git/xorg/app/xedit xedit
@@ -18,7 +18,7 @@ BuildRequires:	libxprintutil-devel >= 1.0.1
 BuildRequires:	x11-util-macros >= 1.0.1
 
 Requires:	x11-data-bitmaps
-Requires:	aspell aspell-us egrep
+Requires:	aspell aspell-en grep
 Requires:	ctags
 
 Requires:	x11-font-alias
@@ -49,6 +49,9 @@ autoreconf -ifs
 %endif
 		--x-includes=%{_includedir}\
 		--x-libraries=%{_libdir}
+
+# make sure the proper resources file will be installed
+rm -f Xedit Xedit.ad
 
 %make
 

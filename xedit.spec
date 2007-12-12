@@ -1,13 +1,13 @@
 %define		enable_xprint	0
 Name:		xedit
 Version:	1.0.2
-Release:	%mkrel 16
+Release:	%mkrel 17
 Summary:	Simple text editor for X
 Group:		Development/X11
 #		git clone git://anongit.freedesktop.org/git/xorg/app/xedit xedit
 Source:		http://xorg.freedesktop.org/releases/individual/app/%{name}-%{version}.tar.bz2
 Patch0:		xedit-git.patch
-License:	MIT
+License:	GPL/MIT
 BuildRoot:	%{_tmppath}/%{name}-root
 
 BuildRequires:	libxt-devel >= 1.0.0

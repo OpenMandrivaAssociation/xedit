@@ -8,6 +8,7 @@ Group:		Development/X11
 Source:		http://xorg.freedesktop.org/releases/individual/app/%{name}-%{version}.tar.bz2
 Patch0:		xedit-git.patch
 License:	GPLv2+ and MIT
+BuildRoot:	%{_tmppath}/%{name}-root
 
 BuildRequires:	libxt-devel >= 1.0.0
 BuildRequires:	libxaw-devel >= 1.0.1

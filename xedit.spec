@@ -1,24 +1,13 @@
 %define		enable_xprint	0
+%define		upstream	1.0.2
 Name:		xedit
 Version:	1.0.3
-Release:	%mkrel 1
+Release:	%mkrel 2
 Summary:	Simple text editor for X
 Group:		Development/X11
-URL: http://xorg.freedesktop.org
-# Note tag xedit-1.0.3@mandriva suggested upstream
-# Tag at commit 946b5b745d9d326799a23f7210b799e1b690643d
-########################################################################
-# git clone git://git.mandriva.com/people/pcpa/xorg/app/xedit xorg/app/xedit
-# cd xorg/app/xedit
-# git-archive --format=tar --prefix=xedit-1.0.3/ xedit-1_0_2 | bzip2 -9 > xedit-1.0.3.tar.bz2
-########################################################################
-Source:		%{name}-%{version}.tar.bz2
+URL:		http://xorg.freedesktop.org
+Source:		http://xorg.freedesktop.org/releases/individual/app/%{name}-%{upstream}.tar.bz2
 License:	GPLv2+ and MIT
-########################################################################
-# git-format-patch xedit-1.0.3@mandriva..origin/mandriva+gpl
-Patch1: 0001-Make-mandriva-1.0.3-release.-This-includes-a-signi.patch
-Patch2: 0002-Add-perl-and-autotools-edit-modes.-Perl-mode-has.patch
-########################################################################
 BuildRoot:	%{_tmppath}/%{name}-root
 BuildRequires:	x11-util-macros		>= 1.1.5
 BuildRequires:	libxaw-devel		>= 1.0.4
@@ -39,14 +28,43 @@ Requires:	x11-font-bh-lucidatypewriter-75dpi x11-font-bh-lucidatypewriter-100dpi
 # lucida (hmtl mode)
 Requires:	x11-font-bh-75dpi x11-font-bh-100dpi
 
+Patch1:  0001-Add-updated-meaningful-README-COPYING-and-AUTHORS-f.patch
+Patch2:  0002-Update-build-for-sane-defaults.patch
+Patch3:  0003-Add-a-generic-hash-table-interface-to-replace-the-ot.patch
+Patch4:  0004-Readd-support-for-international-resource-and-defaul.patch
+Patch5:  0005-Make-ispell-interface-work-correctly-again.patch
+Patch6:  0006-Fix-several-generic-bugs-including.patch
+Patch7:  0007-Fix-several-problems-in-the-line-edit-mode.-Also-all.patch
+Patch8:  0008-Generic-lisp-interface-bug-fixes-including.patch
+Patch9:  0009-Add-support-to-enter-line-number-in-command-line.patch
+Patch10: 0010-Fix-a-bug-in-the-regex-library-involving-alternate-p.patch
+Patch11: 0011-Update-syntax-highlight-table-and-some-minor-tweaks.patch
+Patch12: 0012-Add-a-tags-interface-to-xedit.patch
+Patch13: 0013-Add-support-for-scrolling-textwindow-with-mouse-whee.patch
+Patch14: 0014-GPL-licensed-perl-and-auto-tools-modes.patch
+Patch15: 0015-Bump-reversion-to-1.0.3.patch
+
 %description
 Xedit provides a simple text editor for X.
 
 %prep
-%setup -q -n %{name}-%{version}
+%setup -q -n %{name}-%{upstream}
 
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
+%patch9 -p1
+%patch10 -p1
+%patch11 -p1
+%patch12 -p1
+%patch13 -p1
+%patch14 -p1
+%patch15 -p1
 
 %build
 autoreconf -ifs

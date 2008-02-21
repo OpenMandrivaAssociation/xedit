@@ -2,7 +2,7 @@
 %define		upstream	1.0.2
 Name:		xedit
 Version:	1.0.3
-Release:	%mkrel 2
+Release:	%mkrel 3
 Summary:	Simple text editor for X
 Group:		Development/X11
 URL:		http://xorg.freedesktop.org
@@ -43,6 +43,7 @@ Patch12: 0012-Add-a-tags-interface-to-xedit.patch
 Patch13: 0013-Add-support-for-scrolling-textwindow-with-mouse-whee.patch
 Patch14: 0014-GPL-licensed-perl-and-auto-tools-modes.patch
 Patch15: 0015-Bump-reversion-to-1.0.3.patch
+Patch16: 0016-Fix-an-incorrect-buffer-size-calculation-and-allocat.patch
 
 %description
 Xedit provides a simple text editor for X.
@@ -65,6 +66,7 @@ Xedit provides a simple text editor for X.
 %patch13 -p1
 %patch14 -p1
 %patch15 -p1
+%patch16 -p1
 
 %build
 autoreconf -ifs

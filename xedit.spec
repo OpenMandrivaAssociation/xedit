@@ -82,7 +82,7 @@ autoreconf -ifs
 # make sure the proper resources file will be installed
 rm -f Xedit Xedit.ad
 
-%make
+make
 
 %install
 rm -rf %{buildroot}

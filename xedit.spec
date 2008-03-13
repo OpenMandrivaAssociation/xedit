@@ -2,7 +2,7 @@
 %define		upstream	1.0.2
 Name:		xedit
 Version:	1.0.3
-Release:	%mkrel 3
+Release:	%mkrel 4
 Summary:	Simple text editor for X
 Group:		Development/X11
 URL:		http://xorg.freedesktop.org
@@ -34,16 +34,17 @@ Patch3:  0003-Add-a-generic-hash-table-interface-to-replace-the-ot.patch
 Patch4:  0004-Readd-support-for-international-resource-and-defaul.patch
 Patch5:  0005-Make-ispell-interface-work-correctly-again.patch
 Patch6:  0006-Fix-several-generic-bugs-including.patch
-Patch7:  0007-Fix-several-problems-in-the-line-edit-mode.-Also-all.patch
+Patch7:  0007-Fix-several-problems-in-the-line-edit-mode.patch
 Patch8:  0008-Generic-lisp-interface-bug-fixes-including.patch
 Patch9:  0009-Add-support-to-enter-line-number-in-command-line.patch
-Patch10: 0010-Fix-a-bug-in-the-regex-library-involving-alternate-p.patch
+Patch10: 0010-Fix-a-bug-in-the-regex-library.patch
 Patch11: 0011-Update-syntax-highlight-table-and-some-minor-tweaks.patch
 Patch12: 0012-Add-a-tags-interface-to-xedit.patch
 Patch13: 0013-Add-support-for-scrolling-textwindow-with-mouse-whee.patch
-Patch14: 0014-GPL-licensed-perl-and-auto-tools-modes.patch
-Patch15: 0015-Bump-reversion-to-1.0.3.patch
-Patch16: 0016-Fix-an-incorrect-buffer-size-calculation-and-allocat.patch
+Patch14: 0014-Add-perl-and-auto-tools-modes.patch
+Patch15: 0015-Fix-an-incorrect-buffer-size-calculation-and-allocat.patch
+Patch16: 0016-Support-multiple-make-jobs.patch
+Patch17: 0017-Bump-reversion-to-1.0.3.patch
 
 %description
 Xedit provides a simple text editor for X.
@@ -67,8 +68,12 @@ Xedit provides a simple text editor for X.
 %patch14 -p1
 %patch15 -p1
 %patch16 -p1
+%patch17 -p1
 
 %build
+#   Tarball comes configured with different xorg-util-macros and without
+# some build patches applied.
+#   Also it comes with xprint enabled for everything.
 autoreconf -ifs
 %configure\
 %if %{enable_xprint}
@@ -76,13 +81,11 @@ autoreconf -ifs
 %else
 	--disable-xprint\
 %endif
-	--x-includes=%{_includedir}\
-	--x-libraries=%{_libdir}
 
 # make sure the proper resources file will be installed
 rm -f Xedit Xedit.ad
 
-make
+%make
 
 %install
 rm -rf %{buildroot}

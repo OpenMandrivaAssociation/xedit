@@ -2,12 +2,12 @@
 %define		upstream	1.0.2
 Name:		xedit
 Version:	1.0.3
-Release:	%mkrel 4
+Release:	%mkrel 5
 Summary:	Simple text editor for X
 Group:		Development/X11
 URL:		http://xorg.freedesktop.org
 Source:		http://xorg.freedesktop.org/releases/individual/app/%{name}-%{upstream}.tar.bz2
-License:	GPLv2+ and MIT
+License:	MIT
 BuildRoot:	%{_tmppath}/%{name}-root
 BuildRequires:	x11-util-macros		>= 1.1.5
 BuildRequires:	libxaw-devel		>= 1.0.4
@@ -45,6 +45,8 @@ Patch14: 0014-Add-perl-and-auto-tools-modes.patch
 Patch15: 0015-Fix-an-incorrect-buffer-size-calculation-and-allocat.patch
 Patch16: 0016-Support-multiple-make-jobs.patch
 Patch17: 0017-Bump-reversion-to-1.0.3.patch
+Patch18: 0018-Compile-warning-fixes.patch
+Patch19: 0019-Add-python-mode.patch
 
 %description
 Xedit provides a simple text editor for X.
@@ -69,6 +71,8 @@ Xedit provides a simple text editor for X.
 %patch15 -p1
 %patch16 -p1
 %patch17 -p1
+%patch18 -p1
+%patch19 -p1
 
 %build
 #   Tarball comes configured with different xorg-util-macros and without

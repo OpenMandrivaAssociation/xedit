@@ -2,7 +2,7 @@
 %define		upstream	1.0.2
 Name:		xedit
 Version:	1.0.3
-Release:	%mkrel 5
+Release:	%mkrel 6
 Summary:	Simple text editor for X
 Group:		Development/X11
 URL:		http://xorg.freedesktop.org
@@ -47,6 +47,8 @@ Patch16: 0016-Support-multiple-make-jobs.patch
 Patch17: 0017-Bump-reversion-to-1.0.3.patch
 Patch18: 0018-Compile-warning-fixes.patch
 Patch19: 0019-Add-python-mode.patch
+Patch20: 0020-Warn-if-a-newer-version-of-a-file-exists-before-over.patch
+Patch21: 0021-Fix-an-off-by-one-error-check-that-can-lead-to-an-in.patch
 
 %description
 Xedit provides a simple text editor for X.
@@ -73,6 +75,8 @@ Xedit provides a simple text editor for X.
 %patch17 -p1
 %patch18 -p1
 %patch19 -p1
+%patch20 -p1
+%patch21 -p1
 
 %build
 #   Tarball comes configured with different xorg-util-macros and without

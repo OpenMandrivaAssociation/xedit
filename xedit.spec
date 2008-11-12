@@ -1,6 +1,6 @@
 %define		enable_xprint	0
 Name:		xedit
-Version:	1.1.1
+Version:	1.1.2
 Release:	%mkrel 1
 Summary:	Simple text editor for X
 Group:		Development/X11

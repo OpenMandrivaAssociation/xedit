@@ -6,6 +6,7 @@ Summary:	Simple text editor for X
 Group:		Development/X11
 URL:		http://xorg.freedesktop.org
 Source:		http://xorg.freedesktop.org/releases/individual/app/%{name}-%{version}.tar.bz2
+Patch0:		xedit-1.1.2-fix-str-fmt.patch
 License:	MIT
 BuildRoot:	%{_tmppath}/%{name}-root
 BuildRequires:	x11-util-macros		>= 1.1.5
@@ -32,9 +33,10 @@ Xedit provides a simple text editor for X.
 
 %prep
 %setup -q -n %{name}-%{version}
+%patch0 -p0
 
 %build
-%configure\
+%configure2_5x \
 %if %{enable_xprint}
 	--enable-xprint\
 %else

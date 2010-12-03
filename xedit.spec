@@ -1,7 +1,7 @@
 %define		enable_xprint	0
 Name:		xedit
 Version:	1.1.2
-Release:	%mkrel 3
+Release:	%mkrel 4
 Summary:	Simple text editor for X
 Group:		Development/X11
 URL:		http://xorg.freedesktop.org

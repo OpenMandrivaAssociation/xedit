@@ -1,7 +1,6 @@
-%define		enable_xprint	0
 Name:		xedit
 Version:	1.1.2
-Release:	%mkrel 5
+Release:	%mkrel 6
 Summary:	Simple text editor for X
 Group:		Development/X11
 URL:		http://xorg.freedesktop.org
@@ -9,13 +8,12 @@ Source:		http://xorg.freedesktop.org/releases/individual/app/%{name}-%{version}.
 Patch0:		xedit-1.1.2-fix-str-fmt.patch
 Patch1:		xedit-1.1.2-autotools-mode.patch
 Patch2:		xedit-1.1.2-int64-bignum.patch
+Patch3:		xedit-1.1.2-newfile.patch
+Patch4:		xedit-1.1.2-underlink.patch
 License:	MIT
 BuildRoot:	%{_tmppath}/%{name}-root
 BuildRequires:	x11-util-macros		>= 1.1.5
 BuildRequires:	libxaw-devel		>= 1.0.4
-%if %{enable_xprint}
-BuildRequires:	libxprintutil-devel	>= 1.0.1
-%endif
 Requires:	x11-data-bitmaps
 Requires:	aspell aspell-en grep words
 Requires:	ctags
@@ -38,14 +36,12 @@ Xedit provides a simple text editor for X.
 %patch0 -p0
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
+%patch4 -p1
+autoreconf -ifs
 
 %build
-%configure2_5x \
-%if %{enable_xprint}
-	--enable-xprint\
-%else
-	--disable-xprint\
-%endif
+%configure2_5x --disable-xprint
 
 # make sure the proper resources file will be installed
 rm -f Xedit Xedit.ad

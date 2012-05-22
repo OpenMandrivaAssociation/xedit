@@ -1,15 +1,13 @@
 Name:		xedit
-Version:	1.1.2
-Release:	%mkrel 6
+Version:	1.2.0
+Release:	%mkrel 1
 Summary:	Simple text editor for X
 Group:		Development/X11
 URL:		http://xorg.freedesktop.org
 Source:		http://xorg.freedesktop.org/releases/individual/app/%{name}-%{version}.tar.bz2
 Patch0:		xedit-1.1.2-fix-str-fmt.patch
-Patch1:		xedit-1.1.2-autotools-mode.patch
-Patch2:		xedit-1.1.2-int64-bignum.patch
-Patch3:		xedit-1.1.2-newfile.patch
-Patch4:		xedit-1.1.2-underlink.patch
+Patch1:		xedit-1.1.2-int64-bignum.patch
+Patch2:		xedit-1.1.2-newfile.patch
 License:	MIT
 BuildRoot:	%{_tmppath}/%{name}-root
 BuildRequires:	x11-util-macros		>= 1.1.5
@@ -36,16 +34,9 @@ Xedit provides a simple text editor for X.
 %patch0 -p0
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
-%patch4 -p1
-autoreconf -ifs
 
 %build
-%configure2_5x --disable-xprint
-
-# make sure the proper resources file will be installed
-rm -f Xedit Xedit.ad
-
+%configure2_5x
 %make
 
 %install

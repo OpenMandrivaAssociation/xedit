@@ -1,0 +1,22 @@
+--- lisp/lisp.c.str	2009-05-20 04:35:07.000000000 +0200
++++ lisp/lisp.c	2009-05-20 04:35:50.000000000 +0200
+@@ -5044,7 +5044,7 @@
+ 	    errstr = buffer;
+ 	    break;
+     }
+-    LispDestroy(errstr);
++    LispDestroy("%s", errstr);
+ }
+ 
+ void
+--- lisp/mathimp.c.str	2009-05-20 04:36:02.000000000 +0200
++++ lisp/mathimp.c	2009-05-20 04:36:12.000000000 +0200
+@@ -469,7 +469,7 @@
+ static void
+ fatal_error(int num)
+ {
+-    LispDestroy(fatal_error_strings[num]);
++    LispDestroy("%s",fatal_error_strings[num]);
+ }
+ 
+ static void

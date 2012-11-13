@@ -1,0 +1,287 @@
+diff -p -up xedit-1.1.2/lisp/math.c.orig xedit-1.1.2/lisp/math.c
+--- xedit-1.1.2/lisp/math.c.orig	2010-05-07 18:57:45.468218886 -0300
++++ xedit-1.1.2/lisp/math.c	2010-05-07 18:58:11.979213388 -0300
+@@ -31,6 +31,7 @@
+ 
+ #include "lisp/math.h"
+ #include "lisp/private.h"
++#include <endian.h>
+ 
+ #ifdef __UNIXOS2__
+ # define finite(x) isfinite(x)
+diff -p -up xedit-1.1.2/lisp/mathimp.c.orig xedit-1.1.2/lisp/mathimp.c
+--- xedit-1.1.2/lisp/mathimp.c.orig	2010-05-07 18:57:48.379214344 -0300
++++ xedit-1.1.2/lisp/mathimp.c	2010-05-07 18:59:42.180210213 -0300
+@@ -35,6 +35,7 @@
+  */
+ #ifdef __GNUC__
+ #define CONST			__attribute__ ((__const__))
++#define likely(exprn)		__builtin_expect(!!(exprn), 1)
+ #else
+ #define CONST			/**/
+ #endif
+@@ -2738,7 +2739,7 @@ fi_fi_add_overflow(long op1, long op2)
+ {
+     long op = op1 + op2;
+ 
+-    return (op1 > 0 ? op2 > op : op2 < op);
++    return (op2 >= 0 ? op < op1 : op > op1);
+ }
+ 
+ /*
+@@ -2749,12 +2750,13 @@ fi_fi_sub_overflow(long op1, long op2)
+ {
+     long op = op1 - op2;
+ 
+-    return (((op1 < 0) ^ (op2 < 0)) && ((op < 0) ^ (op1 < 0)));
++    return (op2 >= 0 ? op > op1 : op < op1);
+ }
+ 
+ /*
+  * check if op1 * op2 will overflow
+  */
++#if 0
+ static INLINE int
+ fi_fi_mul_overflow(long op1, long op2)
+ {
+@@ -2788,6 +2790,131 @@ fi_fi_mul_overflow(long op1, long op2)
+     return (shift < LONGSBITS);
+ #endif
+ }
++#else
++/* based on code based on libgcc (that is GPLv3)
++ * version here doesn't return the result or MINSLONG if overflow
++ */
++#ifdef LONG64
++#  define sint	int
++#  define shift	31
++#else
++#  define sint	short
++#  define shift	15
++#endif
++static INLINE int
++fi_fi_mul_overflow(long op1, long op2)
++{
++    typedef union {
++	struct {
++#if __BYTE_ORDER == __LITTLE_ENDIAN
++	    sint	l;
++	    sint	h;
++#else
++	    sint	h;
++	    sint	l;
++#endif
++	} s;
++	long		L;
++    } integer_union;
++
++    /* shameless cut&paste + adaptation/indent-style-change
++     * from libgcc multiplication overflow check */
++    const integer_union uu = { .L = op1 };
++    const integer_union vv = { .L = op2 };
++
++    if (likely(uu.s.h == uu.s.l >> shift)) {
++	/* a fits in a single sint */
++	if (likely(vv.s.h == vv.s.l >> shift))
++	    /* b fits in a single sint as well */
++	    /* a single multiplication, no overflow risk */
++	    return (0);
++	else {
++	    /* two multiplications */
++	    integer_union w0 = {
++		.L = (unsigned long)(unsigned sint)uu.s.l *
++		     (unsigned long)(unsigned sint)vv.s.l
++	    };
++	    integer_union w1 = {
++		.L = (unsigned long)(unsigned sint)uu.s.l *
++		     (unsigned long)(unsigned sint)vv.s.h
++	    };
++
++	    if (vv.s.h < 0)
++		w1.s.h -= uu.s.l;
++	    if (uu.s.l < 0)
++		w1.L -= vv.L;
++	    w1.L += (unsigned sint)w0.s.h;
++	    if (likely(w1.s.h == w1.s.l >> shift))
++		return (0);
++	}
++    }
++    else if (likely(vv.s.h == vv.s.l >> shift)) {
++	/* b fits into a single sint */
++	/* two multiplications */
++	integer_union w0 = {
++	    .L = (unsigned long)(unsigned sint)uu.s.l *
++		 (unsigned long)(unsigned sint)vv.s.l
++	};
++	integer_union w1 = {
++	    .L = (unsigned long)(unsigned sint)uu.s.h *
++		 (unsigned long)(unsigned sint)vv.s.l };
++
++	if (uu.s.h < 0)
++	    w1.s.h -= vv.s.l;
++	if (vv.s.l < 0)
++	    w1.L -= uu.L;
++	w1.L += (unsigned sint)w0.s.h;
++	if (likely(w1.s.h == w1.s.l >> shift))
++	    return (0);
++    }
++    /* A few sign checks and a single multiplication */
++    else if (uu.s.h >= 0) {
++	if (vv.s.h >= 0) {
++	    if (uu.s.h == 0 && vv.s.h == 0) {
++		const long w = (unsigned long)(unsigned sint)uu.s.l *
++			       (unsigned long)(unsigned sint)vv.s.l;
++
++		if (likely(w >= 0))
++		    return (0);
++	    }
++	}
++	else if (uu.s.h == 0 && vv.s.h == (sint)-1) {
++	    integer_union w0 = {
++		.L = (unsigned long)(unsigned sint)uu.s.l *
++		     (unsigned long)(unsigned sint)vv.s.l };
++
++	    w0.s.h -= uu.s.l;
++	    if (likely(w0.s.h < 0))
++		return (0);
++	}
++    }
++    else if (vv.s.h >= 0) {
++	if (uu.s.h == (sint) -1 && vv.s.h == 0) {
++	    integer_union w0 = {
++		.L = (unsigned long)(unsigned sint) uu.s.l *
++		     (unsigned long)(unsigned sint) vv.s.l };
++
++	    w0.s.h -= vv.s.l;
++	    if (likely(w0.s.h < 0))
++		return (0);
++	}
++    }
++    else if (uu.s.h == (sint)-1 && vv.s.h == (sint)-1) {
++	integer_union w0 = {
++	    .L = (unsigned long)(unsigned sint)uu.s.l *
++		 (unsigned long)(unsigned sint) vv.s.l };
++
++	w0.s.h -= uu.s.l;
++	w0.s.h -= vv.s.l;
++	if (likely(w0.s.h >= 0))
++	    return (0);
++    }
++
++    /* overflow */
++    return (1);
++}
++
++#endif
+ 
+ 
+ /************************************************************************
+--- xedit-1.1.2/lisp/read.c.orig	2010-05-07 19:05:08.948218567 -0300
++++ xedit-1.1.2/lisp/read.c	2010-05-07 19:09:17.682210045 -0300
+@@ -1474,9 +1474,7 @@
+     integer = strtol(str, NULL, radix);
+ 
+     /* if does not fit in a long */
+-    if (errno == ERANGE &&
+-	((*str == '-' && integer == LONG_MIN) ||
+-	 (*str != '-' && integer == LONG_MAX))) {
++    if (errno == ERANGE) {
+ 	bignum = LispMalloc(sizeof(mpi));
+ 	mpi_init(bignum);
+ 	mpi_setstr(bignum, str, radix);
+diff -p -up xedit-1.1.2/lisp/mp/mp.c.orig xedit-1.1.2/lisp/mp/mp.c
+--- xedit-1.1.2/lisp/mp/mp.c.orig	2010-05-07 20:14:23.020217512 -0300
++++ xedit-1.1.2/lisp/mp/mp.c	2010-05-07 20:38:26.130558755 -0300
+@@ -190,19 +190,19 @@ mp_add(BNS *rop, BNS *op1, BNS *op2, BNI
+ 	MP_SWAP(op1, op2, len1, len2);
+ 
+     /* unroll start of loop */
+-    value = op1[0] + op2[0];
++    value = (BNI)op1[0] + op2[0];
+     rop[0] = value;
+     carry = value >> BNSBITS;
+ 
+     /* add op1 and op2 */
+     for (size = 1; size < len2; size++) {
+-	value = op1[size] + op2[size] + carry;
++	value = (BNI)op1[size] + op2[size] + carry;
+ 	rop[size] = value;
+ 	carry = value >> BNSBITS;
+     }
+     if (rop != op1) {
+ 	for (; size < len1; size++) {
+-	    value = op1[size] + carry;
++	    value = (BNI)op1[size] + carry;
+ 	    rop[size] = value;
+ 	    carry = value >> BNSBITS;
+ 	}
+@@ -210,7 +210,7 @@ mp_add(BNS *rop, BNS *op1, BNS *op2, BNI
+     else {
+ 	/* if rop == op1, than just adjust carry */
+ 	for (; carry && size < len1; size++) {
+-	    value = op1[size] + carry;
++	    value = (BNI)op1[size] + carry;
+ 	    rop[size] = value;
+ 	    carry = value >> BNSBITS;
+ 	}
+@@ -237,7 +237,7 @@ mp_sub(BNS *rop, BNS *op1, BNS *op2, BNI
+     }
+ 
+     /* unroll start of loop */
+-    svalue = op1[0] - op2[0];
++    svalue = (long)op1[0] - op2[0];
+     rop[0] = svalue;
+     carry = svalue < 0;
+ 
+@@ -249,7 +249,7 @@ mp_sub(BNS *rop, BNS *op1, BNS *op2, BNI
+     }
+     if (rop != op1) {
+ 	for (; size < len1; size++) {
+-	    svalue = op1[size] - carry;
++	    svalue = (long)op1[size] - carry;
+ 	    rop[size] = svalue;
+ 	    carry = svalue < 0;
+ 	}
+@@ -257,7 +257,7 @@ mp_sub(BNS *rop, BNS *op1, BNS *op2, BNI
+     else {
+ 	/* if rop == op1, than just adjust carry */
+ 	for (; carry && size < len1; size++) {
+-	    svalue = op1[size] - carry;
++	    svalue = (long)op1[size] - carry;
+ 	    rop[size] = svalue;
+ 	    carry = svalue < 0;
+ 	}
+diff -p -up xedit-1.1.2/lisp/mp/mpi.c.orig xedit-1.1.2/lisp/mp/mpi.c
+--- xedit-1.1.2/lisp/mp/mpi.c.orig	2010-05-07 19:44:52.441253779 -0300
++++ xedit-1.1.2/lisp/mp/mpi.c	2010-05-07 20:06:55.560585322 -0300
+@@ -318,7 +318,7 @@ mpi_setstr(mpi *rop, char *str, int base
+ 	if (islower(value))
+ 	    value = toupper(value);
+ 	value = value > '9' ? value - 'A' + 10 : value - '0';
+-	value += rop->digs[0] * base;
++	value += (BNI)rop->digs[0] * base;
+ 	carry = value >> BNSBITS;
+ 	rop->digs[0] = (BNS)value;
+ 	for (i = 1; i < size; i++) {
+@@ -642,10 +642,10 @@ mpi_divqr(mpi *qrop, mpi *rrop, mpi *num
+ 	if (ndigs[npos] == ddigs[dpos])
+ 	    qest = (BNS)SMASK;
+ 	else
+-	    qest = (BNS)((((BNI)(ndigs[npos]) << 16) + ndigs[npos - 1]) /
++	    qest = (BNS)((((BNI)(ndigs[npos]) << BNSBITS) + ndigs[npos - 1]) /
+ 			 ddigs[dpos]);
+ 
+-	while ((value = ((BNI)(ndigs[npos]) << 16) + ndigs[npos - 1] -
++	while ((value = ((BNI)(ndigs[npos]) << BNSBITS) + ndigs[npos - 1] -
+ 	        qest * (BNI)(ddigs[dpos])) < CARRY &&
+ 		ddigs[dpos - 1] * (BNI)qest >
+ 		(value << BNSBITS) + ndigs[npos - 2])
+@@ -1603,7 +1603,7 @@ mpi_getstr(char *str, mpi *op, int base)
+ 
+     /* make copy of op data and adjust digs */
+     xdigs = mp_malloc(size * sizeof(BNS));
+-    memcpy(xdigs, op->digs, size * sizeof(unsigned short));
++    memcpy(xdigs, op->digs, size * sizeof(BNS));
+     digs = xdigs + size - 1;
+ 
+     /* convert to string */

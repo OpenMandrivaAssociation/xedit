@@ -1,0 +1,11 @@
+--- xedit-1.1.2/util.c.orig	2011-12-28 23:08:07.617310251 -0200
++++ xedit-1.1.2/util.c	2011-12-28 23:08:16.783355525 -0200
+@@ -522,7 +522,7 @@ ResolveName(char *filename)
+ 	    int	length = strlen(result);
+ 
+ 	    XmuSnprintf(result + length, BUFSIZ - length, "%s%s",
+-			dir[length - 1] == '/' ? "" : "/", file);
++			result[length - 1] == '/' ? "" : "/", file);
+ 	}
+ 
+ 	XtFree(tmp);

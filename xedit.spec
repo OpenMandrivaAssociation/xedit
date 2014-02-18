@@ -7,7 +7,7 @@ URL:		http://xorg.freedesktop.org
 Source0:	http://xorg.freedesktop.org/releases/individual/app/%{name}-%{version}.tar.bz2
 License:	MIT
 BuildRequires:	x11-util-macros		>= 1.1.5
-BuildRequires:	libxaw-devel		>= 1.0.4
+BuildRequires:	pkgconfig(xaw7)
 Requires:	x11-data-bitmaps
 Requires:	aspell aspell-en grep words
 Requires:	ctags

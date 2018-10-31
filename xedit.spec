@@ -1,6 +1,6 @@
 Name:		xedit
 Version:	1.2.2
-Release:	2
+Release:	3
 Summary:	Simple text editor for X
 Group:		Development/X11
 URL:		http://xorg.freedesktop.org

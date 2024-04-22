@@ -1,10 +1,10 @@
 Name:		xedit
-Version:	1.2.3
-Release:	2
+Version:	1.2.4
+Release:	1
 Summary:	Simple text editor for X
 Group:		Development/X11
-URL:		http://xorg.freedesktop.org
-Source0:	http://xorg.freedesktop.org/releases/individual/app/%{name}-%{version}.tar.xz
+URL:		https://xorg.freedesktop.org
+Source0:	https://xorg.freedesktop.org/releases/individual/app/%{name}-%{version}.tar.xz
 License:	MIT
 BuildRequires:	pkgconfig(xorg-macros) >= 1.1.5
 BuildRequires:	xaw-devel >= 1.0.4

@@ -1,5 +1,5 @@
 Name:		xedit
-Version:	1.2.4
+Version:	1.2.5
 Release:	1
 Summary:	Simple text editor for X
 Group:		Development/X11
